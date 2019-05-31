@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Haojohnny\Permission\Traits;
 
 use Haojohnny\Permission\Models\Roles;
