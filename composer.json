@@ -1,0 +1,17 @@
+{
+    "name": "haojohnny\/permission",
+    "description": "Associate users with roles and permissions",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Johnny",
+            "email": "mail@yhcloud.cc"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Haojohnny\\Permission\\": "src"
+        }
+    }
+}
