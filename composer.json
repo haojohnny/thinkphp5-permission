@@ -8,7 +8,9 @@
             "email": "mail@yhcloud.cc"
         }
     ],
-    "require": {},
+    "require": {
+        "topthink/think-migration": "^2.0"
+    },
     "autoload": {
         "psr-4": {
             "Haojohnny\\Permission\\": "src"
