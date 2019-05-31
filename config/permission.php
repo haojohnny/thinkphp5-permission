@@ -3,10 +3,10 @@
 return [
     'tables' => [
         'permissions' => 'permissions',
-        'user_has_permissions' => 'user_has_permissions',
+        'model_has_permissions' => 'model_has_permissions',
         'roles' => 'roles',
-        'user_has_roles' => 'user_has_roles',
-        'role_has_permission' => 'role_has_permission',
+        'model_has_roles' => 'model_has_roles',
+        'role_has_permissions' => 'role_has_permissions',
     ],
     'models' => [
         'permissions' => \Haojohnny\Permission\Models\Permissions::class,
