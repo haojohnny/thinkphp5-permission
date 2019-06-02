@@ -3,6 +3,7 @@
 namespace Haojohnny\Permission\Traits;
 
 use Haojohnny\Permission\Models\Roles;
+use Haojohnny\Permission\Exceptions\RoleDoesNotExist;
 use think\model\relation\belongsToMany;
 use think\model\Collection;
 
@@ -32,12 +33,18 @@ trait HasRoles
     }
 
     /**
-     * @param $roles
+     * @param $role
      * @return bool
      */
-    public function hasRole($roles): bool
+    public function hasRole($role): bool
     {
-        return ! $this->roles->intersect($roles)->isEmpty();
+        try {
+            $role = $this->getStoredRole($role);
+        } catch (RoleDoesNotExist $exception) {
+            return false;
+        }
+
+        return ! $this->roles->intersect($role)->isEmpty();
     }
 
     /**
@@ -48,5 +55,27 @@ trait HasRoles
     public function getRoles(): Collection
     {
         return $this->roles()->all();
+    }
+
+    /**
+     * @param $role
+     * @return Roles
+     * @throws RoleDoesNotExist
+     */
+    public function getStoredRole($role): Roles
+    {
+        if (is_string($role)) {
+            $role = $this->roles->where('name', $role);
+        }
+
+        if (is_numeric($role)) {
+            $role = $this->roles->get($role);
+        }
+
+        if (! $role instanceof Roles) {
+            throw new RoleDoesNotExist;
+        }
+
+        return $role;
     }
 }

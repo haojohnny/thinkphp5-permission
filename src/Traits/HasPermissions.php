@@ -37,19 +37,17 @@ trait HasPermissions
      */
     public function giveDirectPermission(...$permissions)
     {
-        $permissions = (new Collection($permissions))
-            ->map(function ($permissions) {
-                return is_array($permissions) ? array_pop($permissions) : $permissions;
-            })
+        $permissionIds = (new Collection(array_flatten($permissions)))
             ->each(function ($name) {
                 return $this->findOrCreate($name);
             })
             ->filter(function ($permission) {
-                return ! $this->hasPermission($permission->id, false);
-            });
+                return ! $this->hasDirectPermission($permission);
+            })
+            ->column('id');
 
-        if (! $permissions->isEmpty()) {
-            $this->permissions()->saveAll($permissions->column('id'));
+        if (! empty($permissionIds)) {
+            $this->permissions()->saveAll($permissionIds);
         }
 
         return $this;
@@ -57,16 +55,18 @@ trait HasPermissions
 
     /**
      * 为model撤销权限
-     * @param $permission
-     * @return int
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
+     * @param mixed ...$permissions
+     * @return $this
      */
-    public function revokePermission($permission)
+    public function revokePermission(...$permissions)
     {
-        $permission = $this->getStoredPermission($permission);
-        return $this->permissions()->detach($permission->id);
+        $permissionIds = $this->permissions->where('name', 'in', array_flatten($permissions))->column('id');
+
+        if (! empty($permissionIds)) {
+            $this->permissions()->detach($permissionIds);
+        }
+
+        return $this;
     }
 
     /**
@@ -94,7 +94,7 @@ trait HasPermissions
      * @param Permissions $permission
      * @return bool
      */
-    public function hasDirectPermission(Permissions $permission)
+    protected function hasDirectPermission(Permissions $permission)
     {
         return ! $this->permissions->where('id', $permission->id)->isEmpty();
     }
@@ -122,6 +122,7 @@ trait HasPermissions
     /**
      * @param $permission
      * @return array|false|mixed|\PDOStatement|string|\think\Model|null
+     * @throws PermissionDoesNotExist
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
@@ -137,7 +138,7 @@ trait HasPermissions
         }
 
         if (! $permission instanceof Permissions) {
-            throw PermissionDoesNotExist::message($permission);
+            throw new PermissionDoesNotExist;
         }
 
         return $permission;

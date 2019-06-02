@@ -12,6 +12,6 @@ class PermissionDoesNotExist extends Exception
      */
     public static function message($permissionName)
     {
-        return new static("There is no permission named `{$permissionName}`.");
+        return new static("There is no permission `{$permissionName}`.");
     }
 }
