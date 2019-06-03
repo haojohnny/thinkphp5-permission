@@ -7,9 +7,5 @@ return [
         'roles' => 'roles',
         'model_has_roles' => 'model_has_roles',
         'role_has_permissions' => 'role_has_permissions',
-    ],
-    'models' => [
-        'permissions' => \Haojohnny\Permission\Models\Permissions::class,
-        'roles' => \Haojohnny\Permission\Models\Roles::class
     ]
 ];

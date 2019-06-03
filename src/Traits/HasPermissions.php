@@ -14,7 +14,7 @@ trait HasPermissions
      */
     public function getPermissionInstance(): Permissions
     {
-        return app((config('permission.models.permissions')));
+        return app(\Haojohnny\Permission\Models\Permissions::class);
     }
 
     /**
@@ -111,10 +111,10 @@ trait HasPermissions
 
     /**
      * 获取use HasPermissions或use HasRoles的model所有直接权限
-     * @return false|belongsToMany[]
+     * @return false|\think\model\Collection
      * @throws \think\Exception\DbException
      */
-    public function getDirectPermissions()
+    public function getDirectPermissions(): Collection
     {
         return $this->permissions()->all();
     }

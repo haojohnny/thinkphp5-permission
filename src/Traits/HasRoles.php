@@ -16,7 +16,7 @@ trait HasRoles
      */
     public function getRolesInstance(): Roles
     {
-        return app((config('permission.models.roles')));
+        return app(\Haojohnny\Permission\Models\Roles::class);
     }
 
     /**
@@ -113,7 +113,7 @@ trait HasRoles
 
     /**
      * 获取Model所有角色
-     * @return false|belongsToMany[]|\think\model\Collection
+     * @return false|\think\model\Collection
      * @throws \think\Exception\DbException
      */
     public function getRoles(): Collection
