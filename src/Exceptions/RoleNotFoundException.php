@@ -4,11 +4,11 @@ namespace Haojohnny\Permission\Exceptions;
 
 use think\Exception;
 
-class RoleDoesNotFound extends Exception
+class RoleNotFoundException extends Exception
 {
     /**
      * @param $role
-     * @return RoleDoesNotExist
+     * @return RoleNotFoundException
      */
     public static function message($role)
     {

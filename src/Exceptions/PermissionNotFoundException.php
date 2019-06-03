@@ -4,11 +4,11 @@ namespace Haojohnny\Permission\Exceptions;
 
 use think\Exception;
 
-class PermissionNotFound extends Exception
+class PermissionNotFoundException extends Exception
 {
     /**
      * @param $permissionName
-     * @return PermissionDoesNotExist
+     * @return PermissionNotFoundException
      */
     public static function message($permissionName)
     {
