@@ -53,7 +53,7 @@ class Roles extends Model
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function findOrCreate($name)
+    public static function findOrCreate($name)
     {
         $role = self::findByName($name);
 
