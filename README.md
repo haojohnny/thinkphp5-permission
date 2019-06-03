@@ -30,7 +30,7 @@ $ cp ./vendor/haojohnny/permission/database/migrations/20190531110604_create_per
 
 执行数据库迁移
 ```shell
-$ php think php think migrate:create CreatePermissionTables
+$ php think migrate:create CreatePermissionTables
 ```
 
 ## Usage
