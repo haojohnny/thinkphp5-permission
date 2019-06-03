@@ -61,7 +61,7 @@ $role = Roles::findOrCreate(['name' => 'editor']);
 $permission = Permissions::findOrCreate(['name' => 'permission1']);
 ```
 
-在model中使用`use HasRoles`
+在model中使用`use HasRoles`引入权限管理
 
 ```php
 <?php
