@@ -12,7 +12,10 @@
 
 ```shell
 $ composer require haojohnny/permission -vvv
+```
 
+## Prepare
+```shell
 $ mkdir -p ./database/migrations
 
 $ cp ./vendor/haojohnny/permission/config/permission.php ./config/
