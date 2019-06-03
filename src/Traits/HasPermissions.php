@@ -31,22 +31,22 @@ trait HasPermissions
     }
 
     /**
-     * 为model添加权限
+     * 为use HasPermissions或use HasRoles的model添加权限
      * @param mixed ...$permissions
      * @return $this
      */
-    public function giveDirectPermission(...$permissions)
+    public function givePermission(...$permissions)
     {
         $permissionIds = (new Collection(array_flatten($permissions)))
             ->each(function ($name) {
-                return $this->findOrCreate($name);
+                return $this->getPermissionInstance()->findOrCreate($name);
             })
             ->filter(function ($permission) {
-                return ! $this->hasDirectPermission($permission);
+                return !$this->hasDirectPermission($permission);
             })
             ->column('id');
 
-        if (! empty($permissionIds)) {
+        if (!empty($permissionIds)) {
             $this->permissions()->saveAll($permissionIds);
         }
 
@@ -54,7 +54,7 @@ trait HasPermissions
     }
 
     /**
-     * 为model撤销权限
+     * 为use HasPermissions或use HasRoles的model撤销权限
      * @param mixed ...$permissions
      * @return $this
      */
@@ -62,7 +62,7 @@ trait HasPermissions
     {
         $permissionIds = $this->permissions->where('name', 'in', array_flatten($permissions))->column('id');
 
-        if (! empty($permissionIds)) {
+        if (!empty($permissionIds)) {
             $this->permissions()->detach($permissionIds);
         }
 
@@ -70,9 +70,9 @@ trait HasPermissions
     }
 
     /**
-     * 是否拥有权限
+     * 检查use HasPermissions或use HasRoles的model是否拥有权限
      * @param $permission
-     * @param bool $checkRole 是否检查角色权限
+     * @param bool $checkRole 是否检查该权限角色
      * @return bool
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -86,7 +86,7 @@ trait HasPermissions
             return false;
         }
 
-        return $this->hasDirectPermission($permission) || ($checkRole && $this->hasPermissionViaRole($permission));
+        return $this->hasDirectPermission($permission) || ($checkRole && $this->hasRole($permission->roles));
     }
 
     /**
@@ -96,7 +96,7 @@ trait HasPermissions
      */
     protected function hasDirectPermission(Permissions $permission)
     {
-        return ! $this->permissions->where('id', $permission->id)->isEmpty();
+        return !$this->permissions->where('id', $permission->id)->isEmpty();
     }
 
     /**
@@ -106,11 +106,11 @@ trait HasPermissions
      */
     protected function hasPermissionViaRole(Permissions $permission): bool
     {
-        return $this->hasRole($permission->roles);
+        return $this->hasAnyRole($permission->roles);
     }
 
     /**
-     * 获取Model所有直接权限
+     * 获取use HasPermissions或use HasRoles的model所有直接权限
      * @return false|belongsToMany[]
      * @throws \think\Exception\DbException
      */
@@ -130,54 +130,15 @@ trait HasPermissions
     public function getStoredPermission($permission)
     {
         if (is_string($permission)) {
-            $permission = $this->findByName($permission);
+            $permission = $this->getPermissionInstance()->findByName($permission);
         }
 
         if (is_numeric($permission)) {
-            $permission = $this->findById($permission);
+            $permission = $this->getPermissionInstance()->findById($permission);
         }
 
         if (! $permission instanceof Permissions) {
             throw new PermissionDoesNotExist;
-        }
-
-        return $permission;
-    }
-
-    /**
-     * @param string $permission
-     * @return array|false|\PDOStatement|string|\think\Model|null
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    protected function findByName(string $permission)
-    {
-        return $this->getPermissionInstance()->where('name', $permission)->find();
-    }
-
-    /**
-     * @param int $id
-     * @return mixed
-     */
-    protected function findById(int $id)
-    {
-        return $this->getPermissionInstance()::get($id);
-    }
-
-    /**
-     * @param $name
-     * @return array|false|Permissions|\PDOStatement|string|\think\Model|null
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    protected function findOrCreate($name)
-    {
-        $permission = $this->findByName($name);
-
-        if (! $permission) {
-            $permission = $this->getPermissionInstance()::create(['name' => $name]);
         }
 
         return $permission;

@@ -2,13 +2,13 @@
 
 namespace Haojohnny\Permission\Models;
 
-use Haojohnny\Permission\Traits\HasPermissions;
+use Haojohnny\Permission\Traits\HasRoles;
 use think\Model;
 use think\model\relation\BelongsToMany;
 
 class Roles extends Model
 {
-    use HasPermissions;
+    use HasRoles;
 
     public function initialize()
     {
@@ -23,5 +23,44 @@ class Roles extends Model
             'permission_id',
             'role_id'
         );
+    }
+
+    /**
+     * @param string $permission
+     * @return array|false|\PDOStatement|string|Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public static function findByName(string $permission)
+    {
+        return self::where('name', $permission)->find();
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public static function findById(int $id)
+    {
+        return self::get($id);
+    }
+
+    /**
+     * @param $name
+     * @return array|false|Roles|\PDOStatement|string|Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function findOrCreate($name)
+    {
+        $role = self::findByName($name);
+
+        if (!$role) {
+            $role = self::create(['name' => $name]);
+        }
+
+        return $role;
     }
 }

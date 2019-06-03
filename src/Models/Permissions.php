@@ -24,4 +24,43 @@ class Permissions extends Model
             'permission_id'
         );
     }
+
+    /**
+     * @param string $permission
+     * @return array|false|\PDOStatement|string|Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public static function findByName(string $permission)
+    {
+        return self::where('name', $permission)->find();
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public static function findById(int $id)
+    {
+        return self::get($id);
+    }
+
+    /**
+     * @param $name
+     * @return array|false|Permissions|\PDOStatement|string|Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public static function findOrCreate($name)
+    {
+        $permission = self::findByName($name);
+
+        if (!$permission) {
+            $permission = self::create(['name' => $name]);
+        }
+
+        return $permission;
+    }
 }

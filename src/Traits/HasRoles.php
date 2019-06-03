@@ -11,8 +11,6 @@ trait HasRoles
 {
     use HasPermissions;
 
-    protected $rolesInstance;
-
     /**
      * @return Roles
      */
@@ -20,31 +18,97 @@ trait HasRoles
     {
         return app((config('permission.models.roles')));
     }
-    
-    // 多用户 <----> 多角色
+
+    /**
+     * @return belongsToMany
+     */
     public function roles(): belongsToMany
     {
         return $this->belongsToMany(
             config('permission.models.roles'),
             config('permission.tables.model_has_roles'),
-            'model_id',
-            'role_id'
+            'role_id',
+            'model_id'
         );
     }
 
     /**
-     * @param $role
+     * 为use HasRoles的model分配角色
+     * @param mixed ...$roles
+     * @return $this
+     */
+    public function assignRole(...$roles)
+    {
+        $roleIds = (new Collection(array_flatten($roles)))
+            ->each(function ($name) {
+                return $this->getRolesInstance()->findOrCreate($name);
+            })
+            ->filter(function ($role) {
+                return !$this->hasRole($role);
+            })
+            ->column('id');
+
+        if (!empty($roleIds)) {
+            $this->roles()->saveAll($roleIds);
+        }
+
+        return $this;
+    }
+
+    /**
+     * 为use HasRoles的model撤销角色
+     * @param mixed ...$roles
+     * @return $this
+     */
+    public function revokeRole(...$roles)
+    {
+        $roleIds = $this->roles->where('name', 'in', array_flatten($roles))->column('id');
+
+        if (!empty($roleIds)) {
+            $this->roles()->detach($roleIds);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $roles
      * @return bool
      */
-    public function hasRole($role): bool
+    public function hasRole($roles): bool
     {
-        try {
-            $role = $this->getStoredRole($role);
-        } catch (RoleDoesNotExist $exception) {
+        if (is_numeric($roles)) {
+            return !$this->roles->where('id', $roles)->isEmpty();
+        }
+
+        if (is_string($roles)) {
+            return !$this->roles->where('name', $roles)->isEmpty();
+        }
+
+        if ($roles instanceof Roles) {
+            return !$this->roles('id', $roles->id)->isEmpty();
+        }
+
+        return !$this->roles->intersect($roles)->isEmpty();
+    }
+
+    /**
+     * @param $roles
+     * @return bool
+     */
+    public function hasAnyRole($roles)
+    {
+        if (is_array($roles)) {
+            foreach ($roles as $role) {
+                if ($this->hasRole($role)) {
+                    return true;
+                }
+            }
+
             return false;
         }
 
-        return ! $this->roles->intersect($role)->isEmpty();
+        return $this->hasRole($roles);
     }
 
     /**
@@ -61,19 +125,22 @@ trait HasRoles
      * @param $role
      * @return Roles
      * @throws RoleDoesNotExist
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function getStoredRole($role): Roles
     {
         if (is_string($role)) {
-            $role = $this->roles->where('name', $role);
+            $role = $this->getRolesInstance()->findByName($role);
         }
 
         if (is_numeric($role)) {
-            $role = $this->roles->get($role);
+            $role = $this->getRolesInstance()->findById($role);
         }
 
         if (! $role instanceof Roles) {
-            throw new RoleDoesNotExist;
+            throw new RoleDoesNotExist();
         }
 
         return $role;
