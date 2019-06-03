@@ -35,7 +35,7 @@ $ php think migrate:create CreatePermissionTables
 
 ## Usage
 
-`Roles`和`Permissions`继承自`\think\Model`，传入`name`即可创建对应角色和权限
+`Roles`和`Permissions`继承自`\think\Model`，使用create方法创建对应角色和权限
 
 ```php
 <?php
