@@ -123,7 +123,7 @@ $role->givePermission('permission1', ['permission2', 'permission2']);
 // 为角色撤销权限
 $role->revokePermission('permission1', ['permission2', 'permission2']);
 ```
-==注意：角色权限和直接权限是相互独立的。==
+注意：角色权限和直接权限是相互独立的。
 
 给用户为分配角色
 ```php
