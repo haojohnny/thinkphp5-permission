@@ -5,7 +5,7 @@ namespace Haojohnny\Permission\Traits;
 use think\model\relation\belongsToMany;
 use think\model\Collection;
 use Haojohnny\Permission\Models\Permissions;
-use Haojohnny\Permission\Exceptions\PermissionDoesNotExist;
+use Haojohnny\Permission\Exceptions\PermissionNotFound;
 
 trait HasPermissions
 {
@@ -82,7 +82,7 @@ trait HasPermissions
     {
         try {
             $permission = $this->getStoredPermission($permission);
-        } catch (PermissionDoesNotExist $exception) {
+        } catch (PermissionNotFound $exception) {
             return false;
         }
 
@@ -138,7 +138,7 @@ trait HasPermissions
         }
 
         if (! $permission instanceof Permissions) {
-            throw new PermissionDoesNotExist;
+            throw new PermissionNotFound;
         }
 
         return $permission;

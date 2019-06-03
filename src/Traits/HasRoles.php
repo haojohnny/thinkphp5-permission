@@ -3,7 +3,7 @@
 namespace Haojohnny\Permission\Traits;
 
 use Haojohnny\Permission\Models\Roles;
-use Haojohnny\Permission\Exceptions\RoleDoesNotExist;
+use Haojohnny\Permission\Exceptions\RoleDoesNotFound;
 use think\model\relation\belongsToMany;
 use think\model\Collection;
 
@@ -140,7 +140,7 @@ trait HasRoles
         }
 
         if (! $role instanceof Roles) {
-            throw new RoleDoesNotExist();
+            throw new RoleDoesNotFound();
         }
 
         return $role;

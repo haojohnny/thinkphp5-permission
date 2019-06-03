@@ -4,7 +4,7 @@ namespace Haojohnny\Permission\Exceptions;
 
 use think\Exception;
 
-class PermissionDoesNotExist extends Exception
+class PermissionNotFound extends Exception
 {
     /**
      * @param $permissionName

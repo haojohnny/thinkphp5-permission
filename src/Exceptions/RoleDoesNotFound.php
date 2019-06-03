@@ -4,7 +4,7 @@ namespace Haojohnny\Permission\Exceptions;
 
 use think\Exception;
 
-class RoleDoesNotExist extends Exception
+class RoleDoesNotFound extends Exception
 {
     /**
      * @param $role
