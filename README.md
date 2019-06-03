@@ -117,7 +117,7 @@ use Haojohnny\Permission\Models\Roles;
 $role = Roles::create(['name' => 'editor']);
 
 // 为角色添加权限
-$role->givePermission('权限1');
+$role->givePermission('permission1');
 $role->givePermission('permission1', ['permission2', 'permission2']);
 
 // 为角色撤销权限
