@@ -43,7 +43,7 @@ $ php think migrate:create CreatePermissionTables
 use Haojohnny\Permission\Models\Roles;
 use Haojohnny\Permission\Models\Permissions;
 
-$role = Roles::create(['name' => 'writer']);
+$role = Roles::create(['name' => 'editor']);
 $permission = Permissions::create(['name' => 'edit articles']);
 
 ```
